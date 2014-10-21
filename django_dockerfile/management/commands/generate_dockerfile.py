@@ -6,6 +6,7 @@ import shutil
 from django.core.management import BaseCommand
 config_files_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 config_files_dir = os.path.join(config_files_dir, 'config_files')
+currdir = os.getcwd()
 
 class Command(BaseCommand):
 
@@ -13,7 +14,15 @@ class Command(BaseCommand):
         # Generate server_config directory
         if not os.path.isfile('./server_config/'):
             self.stdout.write('Copying default server configuration to ./server_config/')
+            project_name = os.path.basename(os.path.normpath(currdir))
             shutil.copytree(config_files_dir, './server_config/')
+            input = open('./server_config/supervisord.conf', 'rw+')
+            data = list(input)
+            input.seek(0)
+            for line in data:
+                line = line.replace('{{PROJECT_NAME}}', project_name)
+                input.write(line)
+            input.close()
 
         self.stdout.write("Generating a new dockerfile to ./Dockerfile")
         dockerfile = open('Dockerfile', 'w')
