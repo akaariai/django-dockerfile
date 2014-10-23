@@ -91,6 +91,9 @@ logfile=/var/project_state/logs/supervisord.log ; (main log file;default $CWD/su
 pidfile=/var/run/supervisord.pid ; (supervisord pidfile;default supervisord.pid)
 childlogdir=/var/project_state/logs/supervisord_childs/            ; ('AUTO' child log dir, default $TEMP)
 
+[rpcinterface:supervisor]
+supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
+
 [supervisorctl]
 serverurl=unix:///var/run/supervisor.sock ; use a unix:// URL  for a unix socket
 
