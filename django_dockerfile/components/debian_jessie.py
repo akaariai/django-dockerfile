@@ -46,7 +46,6 @@ class DebianJessie(Component):
         w('RUN pip install -r %s' % requirements_file)
         w('ADD . /home/docker/code/')
         w('WORKDIR /home/docker/code/')
-        w('VOLUME /var/project_state/')
         w('RUN chmod a+x /home/docker/code/server_config/run.sh')
         w('CMD ["/home/docker/code/server_config/run.sh"]')
         return '\n'.join(buffer)
