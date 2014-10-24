@@ -24,6 +24,8 @@ class Command(BaseCommand):
             import glob
             files = glob.glob('/var/project_state/*')
             for f in files:
+                if 'docker_run.sh' in f:
+                    continue
                 if os.path.isdir(f):
                     shutil.rmtree(f)
                 else:
