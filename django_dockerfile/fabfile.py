@@ -26,7 +26,7 @@ def _manage(cmd, image):
 def hard_update(port, image, tag='releases'):
     if not files.exists('/tmp/%s' % image):
         with api.cd('/tmp'):
-            api.run('git clone %s %s' % (os.environ['GIT_UPSTREAM_REPO'], image))
+            api.run('git clone %s %s' % (os.environ['DJANGO_GIT_UPSTREAM_REPO'], image))
     with api.cd('/tmp/%s' % image):
         api.run('git fetch origin')
         api.run('git reset --hard origin/%s' % tag)

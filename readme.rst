@@ -16,7 +16,7 @@ Django-dockerfile assumes your project will:
 4. Use Linux for deployment (Docker 1.3.0+ required!)
 
   1. Create a virtualenv for the project (this is not mandatory, but will make
-     handling env variables a *lot* easier later on).
+     handling env variables a *lot* easier later on)::
 
          virtualenv my_project_env
 
@@ -26,20 +26,20 @@ Django-dockerfile assumes your project will:
 
   3. We assume you have PostgreSQL "somedb" with user "someuser" and password
      "somepassword" set up on localhost. Edit the my_project_env/bin/activate
-     file and add the following lines to the end of it:
+     file and add the following lines to the end of it::
 
          export DJANGO_DB_USER=someuser
          export DJANGO_DB_NAME=somedb
          export DJANGO_DB_PASSWORD=somepassword
          export DJANGO_ENVIRONMENT=development
-         export GIT_UPSTREAM_REPO=ssh://git@example.com/my_project
+         export DJANGO_GIT_UPSTREAM_REPO=ssh://git@example.com/my_project
 
      The first three variables control database connection setup, DJANGO_ENVIRONMENT
      tells Django that you are running in development. Finally git server is needed
      so that fabric can automatically handle deployment.
 
   4. Activate your virtualenv, install dependencies, and run migrate to test
-     your setup works.
+     your setup works::
 
          source my_project_env/bin/activate
          cd my_project
@@ -47,7 +47,7 @@ Django-dockerfile assumes your project will:
          python manage.py migrate
      
      The installation of psycopg2 requires availability of PostgreSQL's library
-     headers. You can install them on ubuntu by
+     headers. You can install them on Ubuntu by::
          
          sudo apt-get install libpq-dev
 
@@ -64,16 +64,18 @@ Django-dockerfile assumes your project will:
        - Docker 1.3.0+ installed and running
        - Docker runnable without sudo commands (add users who should have this
          ability to group docker, restart docker daemon)
-       - Directory /var/docker/my_project created and writable by group docker.
   
-     Once those are handled, you will still need to do some initial setup on server:
+     Once those are handled, first we'll create a shell script file used to start
+     the docker image::
 
          fab initial_install:tag=master -H host.example.com -u server_user
 
-     This will build an image, and create file /var/docker/my_project/docker_run.sh on the server.
-     The command will ask you for environment variables to add to the command.
+     This will create file /var/docker/my_project/docker_run.sh on the server.
+     The command will ask you for environment variables to add to the command. The
+     environment variables are the same mentioned in step 3. above, and are given
+     in format `VAR=value`, one item per line.
 
-     Once this is done, you can start the server by running:
+     Once this is done, you can start the server by running::
 
         fab hard_update:tag=master,port=8004 -H host.example.com -u server_user
 
@@ -85,11 +87,6 @@ that directory by adding parameter image=my_project_qa to the fab commands.
 
 Note that you can start a bash shell in the container by running `docker exec -i -t my_project /bin/bash`.
 This is extremely convenient for debugging, but you should avoid doing configuration changes into the
-container - the whole idea is that the Dockerfile + run.sh sets up your running environment. So, if
+container - the whole idea is that the Dockerfile sets up your running environment. So, if
 you want changes to the environment, you should do them into the docker image, not to an instance
 of it.
-
-This involved a couple of steps, but we have achieved the following things:
-
-Fully repeatable installation on *any* server with Docker 1.3.0+. A quick way
-to install qa/testing versions with a couple of commands.
