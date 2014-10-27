@@ -23,7 +23,7 @@ def _collect_static(image):
 def _manage(cmd, image):
     api.run('docker exec -i -t %s python manage.py %s' % (image, cmd))
 
-def hard_update(port, image, tag='releases'):
+def _hard_update(port, image, tag='releases'):
     if not files.exists('/tmp/%s' % image):
         with api.cd('/tmp'):
             api.run('git clone %s %s' % (os.environ['DJANGO_GIT_UPSTREAM_REPO'], image))
@@ -35,12 +35,12 @@ def hard_update(port, image, tag='releases'):
             api.run('docker rm -f %s' % image)
         api.run('/var/docker/%s/docker_run.sh %s %s' % (image, image, port))
 
-def clean_docker():
+def _clean_docker():
     with api.settings(warn_only=True):
         api.run('docker rm $(docker ps -a -q)', shell=True)
         api.run('docker rmi $(docker images -q --filter "dangling=true")', shell=True)
 
-def initial_install(image):
+def _initial_install(image):
     if not files.exists('/var/docker/%s' % image):
         api.sudo('mkdir -p /var/docker/%s' % image)
         api.sudo('chown root:docker /var/docker/%s' % image)
