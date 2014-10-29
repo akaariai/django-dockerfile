@@ -8,7 +8,7 @@ api.env.forward_agent = True
 
 def _soft_update(image, tag='releases',):
     api.local('git archive %s -o /tmp/%s.tar.gz' % (tag, image))
-    api.put('/tmp/%s.tar.gz', '/var/docker/%s/tmp/%s.tar.gz' % (image, image, image))
+    api.put('/tmp/%s.tar.gz' % image, '/var/docker/%s/tmp/%s.tar.gz' % (image, image))
     api.run('docker exec -i -t %s tar -xzf /var/project_state/tmp/%s.tar.gz' % (image, image))
     _migrate(image=image)
     _collect_static(image=image)

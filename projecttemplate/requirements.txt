@@ -3,4 +3,4 @@ dj-static==0.0.6
 django==1.7.1
 psycopg2==2.5.4
 -e git+https://github.com/akaariai/django-dockerfile/@master#egg=django_dockerfile
-fabric==1.5a
+fabric==1.10.0
