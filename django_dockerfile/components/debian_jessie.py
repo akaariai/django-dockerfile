@@ -25,8 +25,7 @@ class DebianJessie(Component):
         # TODO: is this dangerous to set globally? We need this so that
         # for example management commands run outside of docker actually work.
         w('ENV PYTHONIOENCODING utf-8')
-
-        return w
+        return buffer
 
     def get_packages(self):
         # git is needed to fetch the actual running code
@@ -37,6 +36,7 @@ class DebianJessie(Component):
         buffer = []
         w = buffer.append
         w('RUN easy_install pip')
+        w('ADD . /home/docker/code/')
         w('WORKDIR /home/docker/code/')
         # Add requirements separately - allows caching them when they haven't changed.
         requirements_file = None
@@ -51,10 +51,9 @@ class DebianJessie(Component):
         if requirements_file is None:
             raise Exception("No requirements.txt file found!")
         w('RUN pip install -r %s' % requirements_file)
-        w('ADD . /home/docker/code/')
         w('RUN chmod a+x /home/docker/code/server_config/run.sh')
         w('CMD ["/home/docker/code/server_config/run.sh"]')
-        return w
+        return buffer
 
     def dockerfile(self):
         return '\n'.join(buffer)
