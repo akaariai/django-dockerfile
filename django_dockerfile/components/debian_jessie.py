@@ -11,12 +11,8 @@ class DebianJessie(Component):
         w("FROM debian:jessie")
         w("MAINTAINER Anssi Kaariainen")  # TODO: Use project's maintainer...
         w("# Set locale for the image")
-        w('RUN echo "deb http://us.archive.ubuntu.com/ubuntu/ '
-          'precise-updates main restricted" | '
-          'tee -a /etc/apt/sources.list.d/precise-updates.list')
         w('RUN apt-get -qq update')
         w('RUN apt-get install -y locales')
-        # TODO: use settings.py locale instead!
         w('RUN echo en_US.UTF-8 UTF-8 > /etc/locale.gen')
         w('RUN locale-gen')
         w('ENV LC_ALL en_US.UTF-8')
@@ -36,8 +32,6 @@ class DebianJessie(Component):
         buffer = []
         w = buffer.append
         w('RUN easy_install pip')
-        w('ADD . /home/docker/code/')
-        w('WORKDIR /home/docker/code/')
         # Add requirements separately - allows caching them when they haven't changed.
         requirements_file = None
         if os.path.isfile('./prod_env/requirements-prod.txt'):
@@ -51,8 +45,10 @@ class DebianJessie(Component):
         if requirements_file is None:
             raise Exception("No requirements.txt file found!")
         w('RUN pip install -r %s' % requirements_file)
-        w('RUN chmod a+x /home/docker/code/server_config/run.sh')
+        w('WORKDIR /home/docker/code/')
         w('CMD ["/home/docker/code/server_config/run.sh"]')
+        w('ADD . /home/docker/code/')
+        w('RUN chmod a+x /home/docker/code/server_config/run.sh')
         return buffer
 
     def dockerfile(self):
