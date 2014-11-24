@@ -7,8 +7,14 @@ class PostgreSQL(Component):
     data_dir = os.path.join(Component.state_dir, 'postgres')
     bin_dir = '/usr/lib/postgresql/9.4/bin'
 
-    def dockerfile(self):
-        return "RUN apt-get install -y postgresql-9.4 postgresql-client-9.4 postgresql-contrib-9.4"
+    def get_pre_commands(self):
+        return []
+
+    def get_post_commands(self):
+        return []
+
+    def get_packages(self):
+        return ["postgresql-9.4", "postgresql-client-9.4", "postgresql-contrib-9.4"]
 
     def on_first_startup(self):
         import pwd

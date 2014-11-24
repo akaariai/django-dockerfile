@@ -18,10 +18,19 @@ class Command(BaseCommand):
             components.append(cls())
         self.stdout.write("Generating a new dockerfile to ./Dockerfile")
         dockerfile = open('Dockerfile', 'w')
+        packages = []
+        commands = []
+        pre_commands = []
         for component in components:
             dockerfile.write("# From component: %s\n\n" % component.__class__.__name__)
-            dockerfile.write(component.dockerfile())
+            pre_commands.extend(component.get_pre_commands())
+            packages.extend(component.get_packages())
+            commands.extend(component.get_post_commands())
             dockerfile.write('\n\n')
+        dockerfile.write('\n'.join(pre_commands))
+        packages.extend(getattr(settings, 'DOCKER_EXTRA_PACKAGES', []))
+        dockerfile.write('apt-get install -y ' + ' '.join(packages))
+        dockerfile.write('\n'.join(commands))
 
         self.stdout.write('Creating default server configuration to ./server_config/')
         if not os.path.isdir('./server_config'):

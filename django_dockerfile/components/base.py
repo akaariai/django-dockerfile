@@ -15,6 +15,9 @@ class Component(object):
     A command consist of following stages parts:
         1) installation of config files
         2) generation of the dockerfile
+          - get_pre_commands()
+          - get_packages()
+          - get_post_commands()
         3) first startup
         4) startup
         5) participation to supervisor config
@@ -29,7 +32,13 @@ class Component(object):
         started up.
     """
 
-    def dockerfile(self):
+    def get_pre_commands(self):
+        raise NotImplementedError
+
+    def get_packages(self):
+        raise NotImplementedError
+
+    def get_post_commands(self):
         raise NotImplementedError
 
     def on_first_startup(self):

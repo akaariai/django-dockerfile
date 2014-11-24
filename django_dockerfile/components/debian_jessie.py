@@ -5,7 +5,7 @@ from .base import Component
 import os
 
 class DebianJessie(Component):
-    def dockerfile(self):
+    def get_pre_commands(self):
         buffer = []
         w = buffer.append
         w("FROM debian:jessie")
@@ -26,11 +26,18 @@ class DebianJessie(Component):
         # for example management commands run outside of docker actually work.
         w('ENV PYTHONIOENCODING utf-8')
 
-        # We need python-dev, libpq-dev etc so that we can build psycopg2
+        return w
+
+    def get_packages(self):
         # git is needed to fetch the actual running code
-        w('RUN apt-get install -y build-essential git python python-dev python-setuptools '
-          '    libpq-dev supervisor')
+        return ["build-essential", "git", "python", "python-dev", "python-setuptools",
+                "libpq-dev", "supervisor"]
+
+    def get_post_commands(self):
+        buffer = []
+        w = buffer.append
         w('RUN easy_install pip')
+        w('WORKDIR /home/docker/code/')
         # Add requirements separately - allows caching them when they haven't changed.
         requirements_file = None
         if os.path.isfile('./prod_env/requirements-prod.txt'):
@@ -45,9 +52,11 @@ class DebianJessie(Component):
             raise Exception("No requirements.txt file found!")
         w('RUN pip install -r %s' % requirements_file)
         w('ADD . /home/docker/code/')
-        w('WORKDIR /home/docker/code/')
         w('RUN chmod a+x /home/docker/code/server_config/run.sh')
         w('CMD ["/home/docker/code/server_config/run.sh"]')
+        return w
+
+    def dockerfile(self):
         return '\n'.join(buffer)
 
     def on_first_startup(self):
