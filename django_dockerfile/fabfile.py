@@ -57,18 +57,13 @@ def hard_update():
     with api.cd('/tmp/%s' % image):
         api.run('git fetch origin')
         api.run('git reset --hard origin/%s' % tag)
-        if not files.exists('django-dockerfile'):
-            api.run('git clone https://github.com/akaariai/django-dockerfile.git')
-        with api.cd('django-dockerfile'):
-            api.run('git fetch origin')
-            api.run('git reset --hard origin/refactor')
-        api.run('rm -rf django_dockerfile')
-        api.run('cp -a django-dockerfile/django_dockerfile django_dockerfile')
         f = NamedTemporaryFile()
         f.write(json.dumps(loaded_server_env))
         f.flush()
         api.put(f.name, 'calculated_env.json')
-        api.run('python -m django_dockerfile.generate_dockerfile calculated_env.json')
+        api.run('wget https://raw.githubusercontent.com/akaariai/django-dockerfile/'
+                'master/django_dockerfile/generate_dockerfile.py')
+        api.run('python generate_dockerfile.py calculated_env.json')
         api.run('docker build -t %s .' % image)
         with api.settings(warn_only=True):
             api.run('docker rm -f %s' % image)
