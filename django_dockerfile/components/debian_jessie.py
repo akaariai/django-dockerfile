@@ -81,7 +81,7 @@ class DebianJessie(Component):
                 open('%s/run.sh' % self.source_config_dir, 'r')]
 
     def supervisord_conf(self):
-        project_name = os.path.basename(os.path.normpath(os.getcwd()))
+        project_name = os.env['DJANGO_PROJECT_NAME']
         return """
 ; supervisor config file
 

@@ -75,8 +75,8 @@ def hard_update():
 def _run_docker():
     env = []
     for k, v in loaded_server_env['env'].items():
-        env.append('-e "%s=%s"' % (k, v))
-    env.append('-e "DOCKER_COMPONENTS=%s"' % json.dumps(loaded_server_env['components']))
+        env.append('-e \'%s=%s\'' % (k, v))
+    env.append('-e \'DOCKER_COMPONENTS=%s\'' % json.dumps(loaded_server_env['components']))
     env = ' '.join(env)
     api.run(
         """
@@ -98,3 +98,7 @@ def docker_restart():
         api.run('docker stop %s' % image)
         api.run('docker rm %s' % image)
     _run_docker()
+
+def logs():
+    image = loaded_server_env['server']['image']
+    api.run('docker logs %s' % image)
