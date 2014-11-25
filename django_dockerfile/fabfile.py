@@ -2,7 +2,8 @@ from fabric import api
 from fabric.contrib import files
 
 import json
-from tempfile import NamedTemporaryFile
+import tempfile
+
 from django_dockerfile import generate_dockerfile
 
 api.env.forward_agent = True
@@ -57,13 +58,11 @@ def hard_update():
     with api.cd('/tmp/%s' % image):
         api.run('git fetch origin')
         api.run('git reset --hard origin/%s' % tag)
-        f = NamedTemporaryFile()
+        f = tempfile.NamedTemporaryFile()
         f.write(json.dumps(loaded_server_env))
         f.flush()
-        api.put(f.name, 'calculated_env.json')
-        api.run('wget https://raw.githubusercontent.com/akaariai/django-dockerfile/'
-                'master/django_dockerfile/generate_dockerfile.py')
-        api.run('python generate_dockerfile.py calculated_env.json')
+        tmpdir = tempfile.mkdtemp()
+        api.local('python -m django_dockerfile.generate_dockerfile calculated_env.json %s' % tmpdir)
         api.run('docker build -t %s .' % image)
         with api.settings(warn_only=True):
             api.run('docker rm -f %s' % image)

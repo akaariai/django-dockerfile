@@ -82,8 +82,8 @@ if __name__ == '__main__':
         module = import_module(module_ref)
         cls = getattr(module, cls_ref)
         components.append(cls())
-    print("Generating a new dockerfile to ./Dockerfile")
-    dockerfile = open('Dockerfile', 'w')
+    print("Generating a new dockerfile")
+    dockerfile = open(os.path.join(sys.argv2[2], 'Dockerfile'), 'w')
     packages = []
     commands = []
     pre_commands = []
@@ -98,16 +98,17 @@ if __name__ == '__main__':
     dockerfile.write('\n')
     dockerfile.write('\n'.join(commands))
 
-    print('Creating default server configuration to ./server_config/')
-    if not os.path.isdir('./server_config'):
-        os.mkdir('./server_config')
+    print('Creating server configuration')
+    servpath = os.path.join(sys.argv[2], 'server_config')
+    if not os.path.isdir(servpath):
+        os.mkdir(servpath)
     for component in components:
         files = component.config_files()
         for src in files:
-            with open('./server_config/' + os.path.basename(src.name), 'w') as dst:
+            with open(os.path.join(servpath, os.path.basename(src.name), 'w')) as dst:
                 shutil.copyfileobj(src, dst)
             src.close()
-        with open('./server_config/supervisord.conf', 'w') as supervisorconf:
+        with open(os.path.join(servpath, 'supervisord.conf'), 'w') as supervisorconf:
             for component in components:
                 supervisorconf.write("# From component: %s\n\n" % component.__class__.__name__)
                 supervisorconf.write(component.supervisord_conf())
