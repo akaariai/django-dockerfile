@@ -63,7 +63,9 @@ def hard_update():
         f.write(json.dumps(loaded_server_env))
         f.flush()
         tmpdir = tempfile.mkdtemp()
-        api.local('python -m django_dockerfile.generate_dockerfile %s %s' % (f.name, tmpdir))
+        api.local('DJANGO_PROJECT_NAME=%s '
+                  'python -m django_dockerfile.generate_dockerfile %s %s' %
+                  (loaded_server_env['env']['DJANGO_PROJECT_NAME'], f.name, tmpdir))
         api.put(os.path.join(tmpdir, 'Dockerfile'), 'Dockerfile')
         api.put(os.path.join(tmpdir, 'server_config'), 'server_config')
         f.close()
