@@ -2,9 +2,9 @@ from __future__ import unicode_literals
 import os
 import subprocess
 import shutil
-from django.conf import settings
 import importlib
 import glob
+import json
 
 from django.core.management import BaseCommand
 
@@ -15,7 +15,8 @@ currdir = os.getcwd()
 class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         components = []
-        for ref in settings.DOCKER_COMPONENTS:
+        refs = json.loads(os.environ['DOCKER_COMPONENTS'])
+        for ref in refs:
             module_ref, cls_ref = ref.rsplit('.', 1)
             module = importlib.import_module(module_ref)
             cls = getattr(module, cls_ref)

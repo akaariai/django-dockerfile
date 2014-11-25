@@ -78,6 +78,7 @@ def _run_docker():
     env = []
     for k, v in loaded_server_env['env'].items():
         env.append('-e "%s=%s"' % (k, v))
+    env.append('-e "DOCKER_COMPONENTS=%s"' % json.dumps(loaded_server_env['components']))
     env = ' '.join(env)
     api.run(
         """
