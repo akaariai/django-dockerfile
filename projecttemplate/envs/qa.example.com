@@ -4,7 +4,7 @@
         "host": "qa.example.com"
     },
     "env": {
-        "SERVER_ENV": "qa",
+        "DJANGO_ENVIRONMENT": "qa",
         "DJANGO_DB_HOST": "qadb.example.com",
     }
 }

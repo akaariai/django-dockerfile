@@ -11,7 +11,7 @@
         "DJANGO_DB_PASSWORD": null,
         "DJANGO_SECRET_KEY": null,
         "DJANGO_ALLOWED_HOSTS": ".example.com",
-        "SERVER_ENV": null
+        "DJANGO_ENVIRONMENT": null
     },
     "server": {
         "host": null,

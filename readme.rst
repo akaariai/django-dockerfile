@@ -152,7 +152,7 @@ Steps to create a fully working and deployed app.
   
      When the server is set up, you can start the server by running::
 
-        fab from_file:envs/example.com hard_update
+        fab from_env:envs/example.com hard_update
 
   9. Point your browser to http://example.com:8010 - you should have a complete installation ready!
 

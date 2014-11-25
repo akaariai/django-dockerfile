@@ -4,7 +4,7 @@
         "host": "example.com"
     },
     "env": {
-        "SERVER_ENV": "production",
+        "DJANGO_ENVIRONMENT": "production",
         "DJANGO_DB_HOST": "db.example.com",
     }
 }
