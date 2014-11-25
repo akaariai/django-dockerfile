@@ -17,7 +17,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 # See https://docs.djangoproject.com/en/{{ docs_version }}/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '{{ secret_key }}'
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", '{{ secret_key }}')
 
 ENVIRONMENT = os.environ['DJANGO_ENVIRONMENT']
 
@@ -26,7 +26,7 @@ DEBUG = (ENVIRONMENT == 'development')
 
 TEMPLATE_DEBUG = DEBUG
 
-ALLOWED_HOSTS = [os.environ.get('DJANGO_ALLOWED_HOSTS', '')]
+ALLOWED_HOSTS = [os.environ.get('DJANGO_ALLOWED_HOSTS', '*')]
 
 
 # Application definition
@@ -38,7 +38,6 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_dockerfile',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -88,8 +87,3 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/{{ docs_version }}/howto/static-files/
 
 STATIC_URL = '/static/'
-
-DOCKER_COMPONENTS = [
-    'django_dockerfile.components.DebianJessie',
-    'django_dockerfile.components.PostgreSQL',
-]

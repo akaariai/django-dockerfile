@@ -1,0 +1,22 @@
+{
+    "components": ["django_dockerfile.components.DebianJessie"],
+    "packages": [],
+    "git_repo": "ssh://git@example.com/example",
+    "tag": "master",
+    "env": {
+        "DJANGO_DB_HOST": null,
+        "DJANGO_DB_PORT": "5432",
+        "DJANGO_DB_NAME": "example",
+        "DJANGO_DB_USER": "example_user",
+        "DJANGO_DB_PASSWORD": null,
+        "DJANGO_SECRET_KEY": null,
+        "DJANGO_ALLOWED_HOSTS": ".example.com",
+        "SERVER_ENV": null
+    },
+    "server": {
+        "host": null,
+        "port": 8010,
+        "image": "example",
+        "user": "exampleadmin"
+    }
+}
