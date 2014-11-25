@@ -50,7 +50,7 @@ def manage(cmd):
 def hard_update():
     tag = loaded_server_env['tag']
     image = loaded_server_env['server']['image']
-    git_repo = loaded_server_env['env']['DJANGO_GIT_UPSTREAM_REPO']
+    git_repo = loaded_server_env['git_repo']
     if not files.exists('/tmp/%s' % image):
         with api.cd('/tmp'):
             api.run('git clone %s %s' % (git_repo, image))
