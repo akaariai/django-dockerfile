@@ -83,7 +83,7 @@ if __name__ == '__main__':
         cls = getattr(module, cls_ref)
         components.append(cls())
     print("Generating a new dockerfile")
-    dockerfile = open(os.path.join(sys.argv2[2], 'Dockerfile'), 'w')
+    dockerfile = open(os.path.join(sys.argv[2], 'Dockerfile'), 'w')
     packages = []
     commands = []
     pre_commands = []
@@ -105,7 +105,7 @@ if __name__ == '__main__':
     for component in components:
         files = component.config_files()
         for src in files:
-            with open(os.path.join(servpath, os.path.basename(src.name), 'w')) as dst:
+            with open(os.path.join(servpath, os.path.basename(src.name)), 'w') as dst:
                 shutil.copyfileobj(src, dst)
             src.close()
         with open(os.path.join(servpath, 'supervisord.conf'), 'w') as supervisorconf:

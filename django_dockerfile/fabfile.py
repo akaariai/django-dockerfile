@@ -2,6 +2,7 @@ from fabric import api
 from fabric.contrib import files
 
 import json
+import os
 import tempfile
 
 from django_dockerfile import generate_dockerfile
@@ -63,6 +64,9 @@ def hard_update():
         f.flush()
         tmpdir = tempfile.mkdtemp()
         api.local('python -m django_dockerfile.generate_dockerfile %s %s' % (f.name, tmpdir))
+        api.put(os.path.join(tmpdir, 'Dockerfile'), 'Dockerfile')
+        api.put(os.path.join(tmpdir, 'server_config'), 'server_config')
+        f.close()
         api.run('docker build -t %s .' % image)
         with api.settings(warn_only=True):
             api.run('docker rm -f %s' % image)
