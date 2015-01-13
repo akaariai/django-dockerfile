@@ -1,9 +1,10 @@
-from fabric import api
-from fabric.contrib import files
-
 import json
 import os
+from subprocess import call
 import tempfile
+
+from fabric import api
+from fabric.contrib import files
 
 from django_dockerfile import generate_dockerfile
 
@@ -45,9 +46,11 @@ def collect_static():
     image = loaded_server_env['server']['image']
     api.run('docker exec -i -t %s python manage.py collectstatic --noinput' % image)
 
-def manage(cmd):
+def manage(cmd, args=None):
     image = loaded_server_env['server']['image']
-    api.run('docker exec -i -t %s python manage.py %s' % (image, cmd))
+    if not args:
+        args = ''
+    api.run('docker exec -i -t %s python manage.py %s %s' % (image, cmd, args))
 
 def hard_update(no_cache=False):
     tag = loaded_server_env['tag']
@@ -110,3 +113,13 @@ def docker_restart():
 def logs():
     image = loaded_server_env['server']['image']
     api.run('docker logs %s' % image)
+
+def shell():
+    image = loaded_server_env['server']['image']
+    if len(api.env.hosts) != 1:
+        raise RuntimeError("Must run against exactly one host!")
+    host = api.env.hosts[0]
+    if not api.env.user:
+        raise RuntimeError("User must be set for shell command")
+    user = api.env.user
+    call('ssh %s@%s "docker exec -i -t %s /bin/bash"' % (user, host, image), shell=True)
