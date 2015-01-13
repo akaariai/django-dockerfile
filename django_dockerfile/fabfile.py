@@ -75,7 +75,7 @@ def hard_update(no_cache=False):
             no_cache_opt = '--no-cache'
         else:
             no_cache_opt = ''
-        api.run('docker build -t %s %s .' % (no_cache_opt, image))
+        api.run('docker build %s -t %s .' % (no_cache_opt, image))
         with api.settings(warn_only=True):
             api.run('docker rm -f %s' % image)
     _run_docker()
