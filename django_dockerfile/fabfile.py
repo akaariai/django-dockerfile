@@ -49,7 +49,7 @@ def manage(cmd):
     image = loaded_server_env['server']['image']
     api.run('docker exec -i -t %s python manage.py %s' % (image, cmd))
 
-def hard_update():
+def hard_update(no_cache=False):
     tag = loaded_server_env['tag']
     image = loaded_server_env['server']['image']
     git_repo = loaded_server_env['git_repo']
@@ -71,7 +71,11 @@ def hard_update():
         api.run('rm -rf serverconfig')
         api.put(os.path.join(tmpdir, 'server_config'), './')
         f.close()
-        api.run('docker build -t %s .' % image)
+        if no_cache:
+            no_cache_opt = '--no-cache=true'
+        else:
+            no_cache_opt = ''
+        api.run('docker build -t %s %s .' % (no_cache_opt, image))
         with api.settings(warn_only=True):
             api.run('docker rm -f %s' % image)
     _run_docker()
