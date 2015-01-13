@@ -72,7 +72,7 @@ def hard_update(no_cache=False):
         api.put(os.path.join(tmpdir, 'server_config'), './')
         f.close()
         if no_cache:
-            no_cache_opt = '--no-cache=true'
+            no_cache_opt = '--no-cache'
         else:
             no_cache_opt = ''
         api.run('docker build -t %s %s .' % (no_cache_opt, image))
